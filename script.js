@@ -3,6 +3,7 @@ let button = document.querySelectorAll("button");
 let buttonVirgule = document.querySelector("button[data-type=virgule]");
 let buttonNegPos = document.querySelector("button[data-type=neg-pos]");
 let afficheur = document.querySelector("#afficheur") ;
+let historique = document.querySelector("#subCont2") ;
 let total = 0;
 let number = "";
 let ope1 = "";
@@ -51,6 +52,7 @@ for (cell of button) {
                 number = "";
                 buttonVirgule.dataset.bool = "false";
                 buttonNegPos.dataset.bool = "false";
+                historique.innerHTML += `<p>${total}</p>`;
             }
             else if (this.dataset.type == "operateur" && total !== 0) {
                 ope2 = this.value;
@@ -60,18 +62,22 @@ for (cell of button) {
                 if (ope1 == "+") {
                     total += Number(number);
                     afficheur.textContent = total;
+                    historique.innerHTML += `<p>${ope1} ${Number(number)} = ${total}</p>`;
                 }
                 else if (ope1 == "-") {
                     total = total - Number(number);
                     afficheur.textContent = total;
+                    historique.innerHTML += `<p>${ope1} ${Number(number)} = ${total}</p>`;
                 }
                 else if (ope1 == "*") {
                     total = total * Number(number);
                     afficheur.textContent = total;
+                    historique.innerHTML += `<p>${ope1} ${Number(number)} = ${total}</p>`;
                 }
                 else if (ope1 == "/") {
                     total = total / Number(number);
                     afficheur.textContent = total;
+                    historique.innerHTML += `<p>${ope1} ${Number(number)} = ${total}</p>`;
                 }
                 
                 else {
@@ -79,6 +85,7 @@ for (cell of button) {
                 }
                 if (ope2 == "=") {
                     afficheur.textContent = total;
+                    historique.innerHTML += `<p>${ope2} ${total}</p>`;
                     ope2 = "";
                     ope1 = "";
                     total = 0 ;

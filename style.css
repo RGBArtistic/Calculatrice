@@ -1,1 +1,60 @@
-est un concentré de technologies mises au service de votre confort et de la baisse de vos consommations tout en vous simplifiant la vie.
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #555555;
+}
+
+#container {  
+    width: 80%;
+    margin: auto;
+    margin-top: 100px;
+    height: calc(100vh - 200px);
+    overflow-y: hidden;
+}
+
+#subCont1, #subCont2 {
+    width: 40%;
+    display: inline-block;
+}
+
+#container #subCont2 {
+    float: right ;
+    height: calc(100vh - 200px);
+    overflow-y: scroll;
+}
+
+#subCont1 div {
+    width: 100%;
+}
+
+#afficheur {
+    min-height: 100px;
+    background-color: #dbdbdb;
+    border-radius: 5px;
+    margin-bottom: 50px;
+    font-size: 3em;
+    color: #555555;
+    line-height: 100%;
+    padding: 25px;
+}
+
+button {
+    width: calc(25% - 13px);
+    height: 100px;
+    margin: 5px 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #dbdbdb;
+    font-size: 3em;
+    color: #555555;
+}
+
+#subCont2 p {
+    font-size: 3em;
+    text-align: right;
+    color: #dbdbdb;
+    line-height: 0.3em;
+    padding-right: 30px;
+}
