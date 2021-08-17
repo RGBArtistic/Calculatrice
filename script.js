@@ -1,119 +1,144 @@
 let button = document.querySelectorAll("button");
-
+//  Déclaration des variables nécessaires 
 let buttonVirgule = document.querySelector("button[data-type=virgule]");
 let buttonNegPos = document.querySelector("button[data-type=neg-pos]");
 let afficheur = document.querySelector("#afficheur") ;
 let historique = document.querySelector("#subCont2") ;
 let total = 0;
-let number = "";
-let ope1 = "";
-let ope2 = "";
+let currentNumber = '' ;
+let negpos = false ;
+let virgule = false ;
+let arrayCalcul = {total: '', ope: '', egal: false, num1: '', num2: ''} ;
+let scrolled = false ;
+
 let valsArray = ['1','2','3','4','5','6','7','8','9','0','-','c','.','+','-','*','/','=','ce'] ;
-var scrolled = false;
+let dataTypeArray = ['chiffre', 'operateur', 'virgule', 'reset-n', 'neg-pos', 'reset-g']
 
+// Création d'une boucle pour parcourir les différents boutons
 for (cell of button) {
-    cell.addEventListener("click", function () {
-        let verifVal = false ;
-        for(cellVal of valsArray) {
-            if(this.value == cellVal) verifVal = true
+  cell.addEventListener("click", function () {
+    let dataset = this.dataset.type
+    let verifVal = false ;
+    let verifDataType = false ;
+    // Vérification que les valeurs et les data-set ne soient pas modifiés
+    for(cellVal of valsArray) {
+      if(this.value == cellVal) verifVal = true
+    }
+    for(cellDataType of dataTypeArray) {
+      if(dataset == cellDataType) verifDataType = true
+    }
+    if(verifDataType && verifVal) {
+      // action à executer lorsque le bouton est un chiffre 
+      if(dataset == 'chiffre') {
+        if(arrayCalcul['egal'] == true) {
+          arrayCalcul['ope'] = '' ;
+          arrayCalcul['num1'] = '' ;
+          arrayCalcul['egal'] = false
         }
-        if(verifVal == true) {
-            if (this.dataset.type == "chiffre") {
-                number += this.value;
-                afficheur.textContent = number;
-            }
-            else if (this.dataset.type == "virgule" && this.dataset.bool == "false") {
-                number += this.value;
-                this.dataset.bool = "true";
-                afficheur.textContent = number;
-            }
-            else if (this.dataset.type == "neg-pos") {
-                if (this.dataset.bool == "false") {
-                    number = this.value + number;
-                    this.dataset.bool = "true";
-                }
-                else {
-                    number = number.substring(1);
-                    this.dataset.bool = "false";
-                }
-                afficheur.textContent = number;
-            }
-            else if (this.dataset.type == "reset-g") {
-                ope1 = "";
-                ope2 = "";
-                number = "";
-                total = 0;
-                buttonVirgule.dataset.bool = "false";
-                buttonNegPos.dataset.bool = "false";
-                afficheur.textContent = total;
-            }
-            else if (this.dataset.type == "reset-n") {
-                number = "";
-                buttonVirgule.dataset.bool = "false";
-                buttonNegPos.dataset.bool = "false";
-            }
-            else {
-                if (this.dataset.type == "operateur" && total == 0) {
-                    ope1 = this.value;
-                    total = Number(number);
-                    number = "";
-                    buttonVirgule.dataset.bool = "false";
-                    buttonNegPos.dataset.bool = "false";
-                    historique.innerHTML += `<p>${total}</p>`;
-                }
-                else if (this.dataset.type == "operateur" && total !== 0) {
-                    ope2 = this.value;
-                    buttonVirgule.dataset.bool = "false";
-                    buttonNegPos.dataset.bool = "false";
-        
-                    if (ope1 == "+") {
-                        total += Number(number);
-                        afficheur.textContent = total;
-                        historique.innerHTML += `<p>${ope1} ${Number(number)} = ${total}</p>`;
-                    }
-                    else if (ope1 == "-") {
-                        total = total - Number(number);
-                        afficheur.textContent = total;
-                        historique.innerHTML += `<p>${ope1} ${Number(number)} = ${total}</p>`;
-                    }
-                    else if (ope1 == "*") {
-                        total = total * Number(number);
-                        afficheur.textContent = total;
-                        historique.innerHTML += `<p>${ope1} ${Number(number)} = ${total}</p>`;
-                    }
-                    else if (ope1 == "/") {
-                        total = total / Number(number);
-                        afficheur.textContent = total;
-                        historique.innerHTML += `<p>${ope1} ${Number(number)} = ${total}</p>`;
-                    }
-                    
-                    else {
-                        
-                    }
-                    if (ope2 == "=") {
-                        afficheur.textContent = total;
-                        historique.innerHTML += `<p>${ope2} ${total}</p>`;
-                        ope2 = "";
-                        ope1 = "";
-                        total = 0 ;
-                        number = "" ;
-                    }      
-                    ope1 = ope2;
-                    number = "";
-                }       
-            }
+        currentNumber += this.value ;
+        afficheur.textContent = currentNumber ;
+      }
+      // action à executer lorsque le bouton est + / -
+      else if(dataset == 'neg-pos' && !negpos) {
+        currentNumber = '-'+currentNumber ;
+        negpos = true ;
+      }
+      else if(dataset == 'neg-pos' && negpos) {
+        currentNumber = currentNumber.substr(1,currentNumber.length);
+        negpos = false ;
+      }
+      // action à executer lorsque le bouton est une virgule
+      else if(dataset == 'virgule' && !virgule) {
+        currentNumber = currentNumber + '.' ;
+        virgule = true ;
+      }
+      // action à executer pour reset toutes les données de l'appli
+      else if(dataset == 'reset-g') {
+        currentNumber = '' ;
+        afficheur.textContent = '';
+        virgule = false ;
+        negpos = false ;
+        arrayCalcul['num1'] = '';
+        arrayCalcul['num2'] = '' ;
+        arrayCalcul['ope'] = '' ;
+        arrayCalcul['total'] = '' ;
+      }
+      // action à executer pour reset uniquement le donnée courante
+      else if(dataset == 'reset-n') {
+        currentNumber = '' ;
+        afficheur.textContent = '';
+        virgule = false ;
+        negpos = false ;
+      }
+      // actions à executer lorsque le bouton est un opérateur 
+      else if(dataset == 'operateur') {
+        virgule = false ;
+        negpos = false ;
+        // Vérification que l'opérateur n'est pas =
+        if(arrayCalcul['egal'] == true) {
+          arrayCalcul['num1'] = arrayCalcul['total'] ;
+          arrayCalcul['total'] = '';
+          arrayCalcul['egal'] = false ;
         }
-        else afficheur.textContent = 'Arrête de jouer avec la consôle'
-    });
+        // Vérification si les nb 1 est rempli et 2 non
+        if(arrayCalcul['num1'] == '') {
+          arrayCalcul['num1'] = currentNumber ;
+          if(this.value !== '=') {
+            arrayCalcul['ope'] = this.value;
+          } else arrayCalcul['num1'] = '' ;
+        }
+        else if(arrayCalcul['num2'] == '') {
+          // ajout du nombre courant dans le nombre 2 afin d'executer les calculs
+          arrayCalcul['num2'] = currentNumber ;
+          if(this.value == '=') {
+            arrayCalcul['egal'] = true ;
+          }
+          // Addition
+          if(arrayCalcul['ope'] == '+') {
+            arrayCalcul['total'] = Number(arrayCalcul['num1']) + Number(arrayCalcul['num2']) ;
+            historique.innerHTML += `<p>${arrayCalcul['num1']} + ${arrayCalcul['num2']} = ${arrayCalcul['total']}</p>` ;
+            if(arrayCalcul['egal'] !== true) arrayCalcul['ope'] = this.value;
+            arrayCalcul['num1'] = arrayCalcul['total'] ;
+            arrayCalcul['num2'] = '' ;
+          }
+          // Soustraction
+          else if(arrayCalcul['ope'] == '-') {
+            arrayCalcul['total'] = Number(arrayCalcul['num1']) - Number(arrayCalcul['num2']) ;
+            historique.innerHTML += `<p>${arrayCalcul['num1']} - ${arrayCalcul['num2']} = ${arrayCalcul['total']}</p>` ;
+            if(arrayCalcul['egal'] !== true) arrayCalcul['ope'] = this.value;
+            arrayCalcul['num1'] = arrayCalcul['total'] ;
+            arrayCalcul['num2'] = '' ;
+          }
+          // Multiplication
+          else if(arrayCalcul['ope'] == '*') {
+            arrayCalcul['total'] = Number(arrayCalcul['num1']) * Number(arrayCalcul['num2']) ;
+            historique.innerHTML += `<p>${arrayCalcul['num1']} * ${arrayCalcul['num2']} = ${arrayCalcul['total']}</p>` ;
+            if(arrayCalcul['egal'] !== true) arrayCalcul['ope'] = this.value;
+            arrayCalcul['num1'] = arrayCalcul['total'] ;
+            arrayCalcul['num2'] = '' ;
+          }
+          // Division
+          else if(arrayCalcul['ope'] == '/') {
+            arrayCalcul['total'] = Number(arrayCalcul['num1']) / Number(arrayCalcul['num2']) ;
+            historique.innerHTML += `<p>${arrayCalcul['num1']} / ${arrayCalcul['num2']} = ${arrayCalcul['total']}</p>` ;
+            if(arrayCalcul['egal'] !== true) arrayCalcul['ope'] = this.value;
+            arrayCalcul['num1'] = arrayCalcul['total'] ;
+            arrayCalcul['num2'] = '' ;
+          }
+        }
+        // réinitialisation du nombre courant
+        currentNumber = '' ;
+      }
+      else historique.textContent = 'Arrête de jouer avec la console !'
+    }
+    else historique.textContent = 'Arrête de jouer avec la console'
+  })
 }
 
+// fonction pour que la derniere valeur soit toujours visible dans l'historique
 function updateScroll(){
-    historique.scrollTop = historique.scrollHeight;
+  historique.scrollTop = historique.scrollHeight;
 }
+setInterval(updateScroll,500);
 
 
-setInterval(updateScroll,1000);
-
-historique.addEventListener('scroll', function(){
-    scrolled=true;
-});
